@@ -7,7 +7,12 @@ Mix.install([
 ])
 ```
 
-## Section
+## Sample usage
+
+This example is taken directly from the original `sqlite-vec` [README](https://github.com/asg017/sqlite-vec/).
+
+First, we open a new connection, then we load the extension.
+Now we are ready to create the virtual table where we can store vectors.
 
 ```elixir
 alias Exqlite.Basic
@@ -18,6 +23,8 @@ alias Exqlite.Basic
 Basic.load_extension(conn, SqliteVec.path())
 Basic.exec(conn, "create virtual table vec_examples using vec0(sample_embedding float[8]);", [])
 ```
+
+We insert some vectors into the database.
 
 ```elixir
 Basic.exec(conn, """
@@ -30,6 +37,8 @@ insert into vec_examples(rowid, sample_embedding)
     (4, '[-0.710, 0.330, 0.656, 0.041, -0.990, 0.726, 0.385, -0.958]');
 """)
 ```
+
+Then, we can query for nearest neighbors.
 
 ```elixir
 Basic.exec(conn, """
