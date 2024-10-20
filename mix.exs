@@ -16,9 +16,9 @@ defmodule SqliteVec.MixProject do
   end
 
   defp download_sqlite_vec(_) do
-    install_dir = SqliteVec.install_dir()
-    File.mkdir_p!(install_dir)
-    SqliteVec.download(install_dir)
+    output_dir = Path.join(__DIR__, "priv")
+    File.mkdir_p!(output_dir)
+    SqliteVec.download(output_dir)
   end
 
   # Run "mix help compile.app" to learn about applications.
