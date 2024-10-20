@@ -2,11 +2,9 @@
 
 ```elixir
 Mix.install([
-  {:sqlite_vec, path: "/home/joel/code/sqlite_vec"},
+  {:sqlite_vec, path: "../sqlite_vec"},
   {:exqlite, "~> 0.25.0"}
 ])
-
-
 ```
 
 ## Section

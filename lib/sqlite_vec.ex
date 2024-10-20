@@ -6,7 +6,7 @@ defmodule SqliteVec do
   def path(), do: Application.app_dir(:sqlite_vec, "priv/vec0")
 
   def download(output_dir) do
-    {:ok, _path, []} = SqliteVec.Downloader.download(output_dir)
+    SqliteVec.Downloader.download(output_dir)
 
     {:ok, []}
   end

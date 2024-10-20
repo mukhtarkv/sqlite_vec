@@ -16,4 +16,42 @@ defmodule SqliteVec.Downloader do
   def download_name(version, os, :arm64), do: download_name(version, os, :aarch64)
 
   def download_name(version, os, arch), do: "sqlite-vec-#{version}-loadable-#{os}-#{arch}.tar.gz"
+
+  def pre_download_hook(file, output_dir) do
+    current_version = Path.basename(file, ".tar.gz")
+
+    if cached_exists?(output_dir) and equals_cached_version?(current_version) do
+      :skip
+    else
+      File.write(Path.join(output_dir, "tmp_version"), current_version)
+      :cont
+    end
+  end
+
+  def cached_exists?(output_dir) do
+    matches =
+      output_dir
+      |> Path.join("vec0.*")
+      |> Path.wildcard()
+
+    matches != []
+  end
+
+  def equals_cached_version?(current_version) do
+    case File.read(cached_version_file()) do
+      {:ok, cached_version} -> current_version == cached_version
+      _else -> false
+    end
+  end
+
+  defp cached_version_file(), do: Application.app_dir(:sqlite_vec, "priv/version")
+
+  def post_write_hook(file) do
+    tmp_version_file = file |> Path.dirname() |> Path.join("tmp_version")
+    version_file = file |> Path.dirname() |> Path.join("version")
+
+    File.rename(tmp_version_file, version_file)
+
+    :ok
+  end
 end

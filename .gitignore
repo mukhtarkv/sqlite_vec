@@ -27,3 +27,4 @@ sqlite_vec-*.tar
 
 # downloaded artifact
 /priv/vec0.*
+/priv/version
