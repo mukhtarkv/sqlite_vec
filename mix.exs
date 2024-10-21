@@ -31,7 +31,13 @@ defmodule SqliteVec.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:octo_fetch, "~> 0.4.0"}
+      {:octo_fetch, "~> 0.4.0"},
+      # {:exqlite, ">= 0.0.0"},
+      {:ecto, "~> 3.0", optional: true},
+      {:nx, "~> 0.9", optional: true},
+      {:ecto_sql, "~> 3.0", only: :test},
+      {:ecto_sqlite3, "~> 0.17", only: :test}
+      # {:ex_doc, "~> 0.34", only: :dev, runtime: false}
     ]
   end
 end

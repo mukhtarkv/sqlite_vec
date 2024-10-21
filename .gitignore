@@ -28,3 +28,9 @@ sqlite_vec-*.tar
 # downloaded artifact
 /priv/vec0.*
 /priv/version
+
+/livebooks/*.db
+/livebooks/*.db-*
+
+# test database
+/test/*.db*
