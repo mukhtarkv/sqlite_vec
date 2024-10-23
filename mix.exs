@@ -36,7 +36,8 @@ defmodule SqliteVec.MixProject do
       {:ecto, "~> 3.0", optional: true},
       {:nx, "~> 0.9", optional: true},
       {:ecto_sql, "~> 3.0", only: :test},
-      {:ecto_sqlite3, "~> 0.17", only: :test}
+      {:ecto_sqlite3, "~> 0.17", only: :test},
+      {:stream_data, "~> 1.0", only: :test}
       # {:ex_doc, "~> 0.34", only: :dev, runtime: false}
     ]
   end
