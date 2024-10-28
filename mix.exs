@@ -16,9 +16,25 @@ defmodule SqliteVec.MixProject do
   end
 
   defp download_sqlite_vec(_) do
-    output_dir = Path.join(__DIR__, "priv")
+    version = Application.get_env(:sqlite_vec, :version, SqliteVec.Downloader.default_version())
+
+    output_dir = Path.join(__DIR__, "priv/#{version}")
     File.mkdir_p!(output_dir)
-    SqliteVec.download(output_dir)
+
+    case SqliteVec.download(output_dir, version) do
+      :skip ->
+        :ok
+
+      {:ok, _successful_files, []} ->
+        :ok
+
+      {:ok, _successful_files, failed_files} ->
+        message = "failed to download: " <> Enum.join(failed_files, ", ")
+        raise(message)
+
+      {:error, message} ->
+        raise(message)
+    end
   end
 
   # Run "mix help compile.app" to learn about applications.

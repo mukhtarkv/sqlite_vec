@@ -22,18 +22,15 @@ defmodule SqliteVec.Downloader do
 
   def download_name(version, os, arch), do: "sqlite-vec-#{version}-loadable-#{os}-#{arch}.tar.gz"
 
-  def pre_download_hook(file, output_dir) do
-    current_version = Path.basename(file, ".tar.gz")
-
-    if cached_exists?(output_dir) and equals_cached_version?(current_version) do
+  def pre_download_hook(_file, output_dir) do
+    if library_exists?(output_dir) do
       :skip
     else
-      File.write(Path.join(output_dir, "tmp_version"), current_version)
       :cont
     end
   end
 
-  def cached_exists?(output_dir) do
+  defp library_exists?(output_dir) do
     matches =
       output_dir
       |> Path.join("vec0.*")
@@ -42,21 +39,20 @@ defmodule SqliteVec.Downloader do
     matches != []
   end
 
-  def equals_cached_version?(current_version) do
-    case File.read(cached_version_file()) do
-      {:ok, cached_version} -> current_version == cached_version
-      _else -> false
-    end
-  end
-
-  defp cached_version_file(), do: Application.app_dir(:sqlite_vec, "priv/version")
-
   def post_write_hook(file) do
-    tmp_version_file = file |> Path.dirname() |> Path.join("tmp_version")
-    version_file = file |> Path.dirname() |> Path.join("version")
+    output_dir = file |> Path.dirname() |> Path.join("..") |> Path.expand()
+    current_version = file |> Path.dirname() |> Path.basename()
 
-    File.rename(tmp_version_file, version_file)
+    remove_other_versions(output_dir, current_version)
 
     :ok
+  end
+
+  defp remove_other_versions(output_dir, current_version) do
+    output_dir
+    |> Path.join("*")
+    |> Path.wildcard()
+    |> Enum.filter(fn path -> Path.basename(path) != current_version end)
+    |> Enum.map(&File.rm_rf(&1))
   end
 end

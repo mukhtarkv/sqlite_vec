@@ -3,11 +3,13 @@ defmodule SqliteVec do
   Downloads `SqliteVec`.
   """
 
-  def path(), do: Application.app_dir(:sqlite_vec, "priv/vec0")
+  def path() do
+    version = Application.get_env(:sqlite_vec, :version, SqliteVec.Downloader.default_version())
 
-  def download(output_dir) do
-    SqliteVec.Downloader.download(output_dir)
+    Application.app_dir(:sqlite_vec, "priv/#{version}/vec0")
+  end
 
-    {:ok, []}
+  def download(output_dir, version) do
+    SqliteVec.Downloader.download(output_dir, override_version: version)
   end
 end

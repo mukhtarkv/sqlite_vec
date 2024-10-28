@@ -25,9 +25,8 @@ sqlite_vec-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
-# downloaded artifact
-/priv/vec0.*
-/priv/version
+# downloaded libraries
+/priv/**/vec0.*
 
 /livebooks/*.db
 /livebooks/*.db-*
