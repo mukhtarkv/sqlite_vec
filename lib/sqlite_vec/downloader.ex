@@ -7,6 +7,11 @@ defmodule SqliteVec.Downloader do
         {:darwin, :amd64, "8ef228a8935883f8b5c52f191a8123909ea48ab58f6eceb5d4c12ada654556cf"},
         {:darwin, :arm64, "c57a552c8a8df823a8deb937f81d8a9ec5c81377e66e86cd5db8508b74ef4068"},
         {:linux, :amd64, "5fa404f6d61de7b462d1f1504332a522a64331103603ca079714f078cdb28606"}
+      ],
+      "0.1.2" => [
+        {:darwin, :amd64, "d2d4d312fac1d609723b75cc777df42f3ff0770903cd89d53ca201c6e10c25f9"},
+        {:darwin, :arm64, "a449cb190366ee0080bcab132d788b0f792600bfa8dd7c0aba539444c6e126ba"},
+        {:linux, :amd64, "539e6bb92612665e1fd1870df1b2c5db66e327bf5a98aee1666c57fb3c6e128d"}
       ]
     }
 
