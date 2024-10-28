@@ -5,6 +5,15 @@ if Code.ensure_loaded?(Ecto) do
     """
 
     @doc """
+    Creates a bit vector
+    """
+    defmacro vec_bit(vector_data) do
+      quote do
+        fragment("vec_bit(?)", type(unquote(vector_data), :binary))
+      end
+    end
+
+    @doc """
     Creates an int8 vector
     """
     defmacro vec_int8(vector_data) do
