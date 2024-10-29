@@ -28,8 +28,8 @@ sqlite_vec-*.tar
 # downloaded libraries
 /priv/**/vec0.*
 
-/livebooks/*.db
-/livebooks/*.db-*
+/notebooks/*.db
+/notebooks/*.db-*
 
 # test database
 /test/*.db*
