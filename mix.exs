@@ -1,17 +1,26 @@
 defmodule SqliteVec.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/joelpaulkoch/sqlite_vec"
+  @version "0.1.0"
+
   def project do
     [
       app: :sqlite_vec,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       compilers: Mix.compilers() ++ [:download_sqlite_vec],
       aliases: [
         "compile.download_sqlite_vec": &download_sqlite_vec/1
-      ]
+      ],
+      name: "SqliteVec",
+      package: package(),
+      docs: docs(),
+      description: "A wrapper around sqlite-vec",
+      source_url: @source_url,
+      homepage_url: @source_url
     ]
   end
 
@@ -37,24 +46,45 @@ defmodule SqliteVec.MixProject do
     end
   end
 
-  # Run "mix help compile.app" to learn about applications.
-  def application do
-    [
-      extra_applications: [:logger]
-    ]
-  end
-
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:octo_fetch, "~> 0.4.0"},
-      # {:exqlite, ">= 0.0.0"},
       {:ecto, "~> 3.0", optional: true},
       {:nx, "~> 0.9", optional: true},
       {:ecto_sql, "~> 3.0", only: :test},
       {:ecto_sqlite3, "~> 0.17", only: :test},
-      {:stream_data, "~> 1.0", only: :test}
-      # {:ex_doc, "~> 0.34", only: :dev, runtime: false}
+      {:stream_data, "~> 1.0", only: :test},
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Joel Koch"],
+      licenses: ["MIT"],
+      files: ~w(lib mix.exs README.md LICENSE),
+      links: %{
+        GitHub: "https://github.com/joelpaulkoch/sqlite_vec"
+      }
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      source_ref: "v#{@version}",
+      source_url: @source_url,
+      extras: [
+        {"README.md", title: "README"},
+        "notebooks/getting_started.livemd",
+        "notebooks/usage_with_ecto.livemd"
+      ],
+      groups_for_extras: [
+        Notebooks: [
+          "notebooks/getting_started.livemd",
+          "notebooks/usage_with_ecto.livemd"
+        ]
+      ]
     ]
   end
 end
