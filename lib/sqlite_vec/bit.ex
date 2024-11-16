@@ -24,9 +24,15 @@ defmodule SqliteVec.Bit do
         raise ArgumentError, "expected rank to be 1"
       end
 
+      if not binary_type_size?(Nx.type(tensor)) do
+        raise ArgumentError, "expected type size to be divisible by 8"
+      end
+
       bin = tensor |> Nx.to_binary()
       from_binary(<<bin::binary>>)
     end
+
+    defp binary_type_size?({_type, size}), do: rem(size, 8) == 0
   end
 
   @doc """

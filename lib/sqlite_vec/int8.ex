@@ -24,7 +24,11 @@ defmodule SqliteVec.Int8 do
         raise ArgumentError, "expected rank to be 1"
       end
 
-      bin = tensor |> Nx.as_type(:s8) |> Nx.to_binary()
+      if Nx.type(tensor) != {:s, 8} do
+        raise ArgumentError, "expected type to be :s8"
+      end
+
+      bin = tensor |> Nx.to_binary()
       from_binary(<<bin::binary>>)
     end
   end

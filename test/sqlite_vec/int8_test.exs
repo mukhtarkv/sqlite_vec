@@ -14,63 +14,25 @@ defmodule SqliteVec.Int8.Test do
     {StreamData.positive_integer()}
   end
 
-  defp type_generator do
-    [
-      {:u, 2},
-      {:u, 4},
-      {:u, 8},
-      # {:u, 16},
-      # {:u, 32},
-      # {:u, 64},
-      {:s, 2},
-      {:s, 4},
-      {:s, 8},
-      # {:s, 16},
-      # {:s, 32},
-      # {:s, 64},
-      # {:f, 8},
-      {:f, 16},
-      {:f, 32}
-      # {:f, 64},
-      # {:bf, 16},
-      # {:c, 64},
-      # {:c, 128}
-    ]
-    |> Enum.map(&StreamData.constant(&1))
-    |> StreamData.one_of()
-  end
-
-  defp tensor_generator do
-    gen all(seed <- StreamData.integer(), shape <- shape_generator(), type <- type_generator()) do
+  defp s8_tensor_generator do
+    gen all(seed <- StreamData.integer(), shape <- shape_generator()) do
+      type = {:s, 8}
       key = Nx.Random.key(seed)
 
       min = Nx.Constants.min_finite(type) |> Nx.to_number()
       max = Nx.Constants.max_finite(type) |> Nx.to_number()
 
-      {tensor, _key} =
-        case type do
-          {:s, _} -> Nx.Random.randint(key, min, max, shape: shape, type: type)
-          {:u, _} -> Nx.Random.randint(key, min, max, shape: shape, type: type)
-          {:f, _} -> Nx.Random.uniform(key, min, max, shape: shape, type: type)
-          {:bf, _} -> Nx.Random.uniform(key, shape: shape, type: type)
-          {:c, _} -> Nx.Random.uniform(key, shape: shape, type: type)
-        end
-
+      {tensor, _key} = Nx.Random.randint(key, min, max, shape: shape, type: type)
       tensor
     end
-    |> StreamData.filter(&is_finite(&1))
   end
 
-  defp is_finite(tensor) do
-    tensor |> Nx.is_infinity() |> Nx.any() |> Nx.to_number() == 0
-  end
-
-  test "vector" do
+  test "creating vector from vector works" do
     vector = SqliteVec.Int8.new([1, 2, 3])
     assert vector == vector |> SqliteVec.Int8.new()
   end
 
-  test "list" do
+  test "creating vector from list works" do
     list = [1, 2, 3]
     assert list == list |> SqliteVec.Int8.new() |> SqliteVec.Int8.to_list()
   end
@@ -81,13 +43,42 @@ defmodule SqliteVec.Int8.Test do
     end
   end
 
-  test "tensor" do
+  test "creating vector from tensor of type s8 works" do
     tensor = Nx.tensor([1, 2, 3], type: :s8)
     assert tensor == tensor |> SqliteVec.Int8.new() |> SqliteVec.Int8.to_tensor()
   end
 
-  property "creating vector from tensor and calling to_tensor/1 returns original tensor" do
-    check all(tensor <- tensor_generator()) do
+  test "creating vector from tensor that's not of type s8 errors" do
+    types =
+      [
+        :u2,
+        :u4,
+        :u8,
+        :u16,
+        :u32,
+        :u64,
+        :s2,
+        :s4,
+        # :s8,
+        :s16,
+        :s32,
+        :s64,
+        :f8,
+        :f16,
+        :f32,
+        :f64,
+        :bf16,
+        :c64,
+        :c128
+      ]
+
+    for type <- types do
+      assert_raise ArgumentError, fn -> SqliteVec.Int8.new(Nx.tensor([1], type: type)) end
+    end
+  end
+
+  property "creating vector from tensor of type :s8 and calling to_tensor/1 returns original tensor" do
+    check all(tensor <- s8_tensor_generator()) do
       assert tensor ==
                tensor
                |> SqliteVec.Int8.new()

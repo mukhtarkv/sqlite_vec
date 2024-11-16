@@ -24,7 +24,11 @@ defmodule SqliteVec.Float32 do
         raise ArgumentError, "expected rank to be 1"
       end
 
-      bin = tensor |> Nx.as_type(:f32) |> Nx.to_binary() |> f32_native_to_little()
+      if Nx.type(tensor) != {:f, 32} do
+        raise ArgumentError, "expected type to be :f32"
+      end
+
+      bin = tensor |> Nx.to_binary() |> f32_native_to_little()
       from_binary(<<bin::binary>>)
     end
 
