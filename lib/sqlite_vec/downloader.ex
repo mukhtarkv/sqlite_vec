@@ -7,9 +7,23 @@ defmodule SqliteVec.Downloader do
   """
 
   use OctoFetch,
-    latest_version: "0.1.3",
+    latest_version: "0.1.5",
     github_repo: "asg017/sqlite-vec",
     download_versions: %{
+      "0.1.5" => [
+        {:darwin, :amd64, "1daa90b7cdda7e873af4636a20a2b6daf0ebd4d664f2bbbcc2ffeae219bf34b6"},
+        {:darwin, :arm64, "348ea4ce39b4b4749b19ee93e5e9674d6ed7616e3e313cb20f6354cdecbebc75"},
+        {:linux, :amd64, "626bb9b66896269facdf7f87d94c308bf0523cb1e584ff7ff5b3f51936f21d24"},
+        {:linux, :arm64, "8ce460c1f2adcbbc709f5ca1d1a3578c34c62c131d1a044bd3ff7c0729be2137"},
+        {:windows, :amd64, "cfd31e96d2edf27749c4c2063134737fc98ac87b6e113acf204db57563b078bc"}
+      ],
+      "0.1.4" => [
+        {:darwin, :amd64, "1be7676e9e63c427fe0ce84b738c1c9012f2bbb4b81ecc63719b5552f07e1b26"},
+        {:darwin, :arm64, "e7962da8acd394ad95cfc4822d573d5b10ac9f93d2dd28b73e76841eb5da45ee"},
+        {:linux, :amd64, "2d3855b9953f05aba033536efed3cd2a9cc4518ee009301b0c03b17f9d698819"},
+        {:linux, :arm64, "b0b8d2b7b4beb9641417874689e737fe872d79e208c0c306565bd5fbfacb7124"},
+        {:windows, :amd64, "39a5575c565af7c135b9f62db9d92aebd7af096cc2b952c8a31b40f674ccf2cf"}
+      ],
       "0.1.3" => [
         {:darwin, :amd64, "8ef228a8935883f8b5c52f191a8123909ea48ab58f6eceb5d4c12ada654556cf"},
         {:darwin, :arm64, "c57a552c8a8df823a8deb937f81d8a9ec5c81377e66e86cd5db8508b74ef4068"},
