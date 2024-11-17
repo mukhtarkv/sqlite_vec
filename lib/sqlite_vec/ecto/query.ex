@@ -7,27 +7,27 @@ if Code.ensure_loaded?(Ecto) do
     @doc """
     Creates a bit vector
     """
-    defmacro vec_bit(vector_data) do
+    defmacro vec_bit(vector) do
       quote do
-        fragment("vec_bit(?)", type(unquote(vector_data), :binary))
+        fragment("vec_bit(?)", type(^unquote(vector).data, :binary))
       end
     end
 
     @doc """
     Creates an int8 vector
     """
-    defmacro vec_int8(vector_data) do
+    defmacro vec_int8(vector) do
       quote do
-        fragment("vec_int8(?)", type(unquote(vector_data), :binary))
+        fragment("vec_int8(?)", type(^unquote(vector).data, :binary))
       end
     end
 
     @doc """
     Creates a float32 vector
     """
-    defmacro vec_f32(vector_data) do
+    defmacro vec_f32(vector) do
       quote do
-        fragment("vec_f32(?)", type(unquote(vector_data), :binary))
+        fragment("vec_f32(?)", type(^unquote(vector).data, :binary))
       end
     end
 
