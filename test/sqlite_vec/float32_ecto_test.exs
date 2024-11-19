@@ -51,7 +51,7 @@ defmodule EctoTest do
     items =
       Repo.all(
         from(i in Float32Item,
-          order_by: l2_distance(i.embedding, vec_f32(v)),
+          order_by: vec_distance_L2(i.embedding, vec_f32(v)),
           limit: 5
         )
       )
@@ -71,7 +71,7 @@ defmodule EctoTest do
     items =
       Repo.all(
         from(i in Float32Item,
-          order_by: cosine_distance(i.embedding, vec_f32(SqliteVec.Float32.new([1, 1]))),
+          order_by: vec_distance_cosine(i.embedding, vec_f32(SqliteVec.Float32.new([1, 1]))),
           limit: 5
         )
       )
@@ -83,7 +83,7 @@ defmodule EctoTest do
     items =
       Repo.all(
         from(i in Float32Item,
-          order_by: 1 - cosine_distance(i.embedding, vec_f32(SqliteVec.Float32.new([1, 1]))),
+          order_by: 1 - vec_distance_cosine(i.embedding, vec_f32(SqliteVec.Float32.new([1, 1]))),
           limit: 5
         )
       )

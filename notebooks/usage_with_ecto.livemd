@@ -87,7 +87,7 @@ v = SqliteVec.Float32.new([2, 2, 3, 3])
 
 MyApp.Repo.all(
   from(i in Embedding,
-    order_by: l2_distance(i.embedding, vec_f32(^v.data))
+    order_by: vec_distance_L2(i.embedding, vec_f32(^v.data))
   )
 )
 ```
@@ -140,7 +140,7 @@ v = SqliteVec.Float32.new([2, 2])
 
 MyApp.Repo.all(
   from(i in VirtualEmbedding,
-    order_by: l2_distance(i.embedding, vec_f32(^v.data))
+    order_by: vec_distance_L2(i.embedding, vec_f32(^v.data))
   )
 )
 ```

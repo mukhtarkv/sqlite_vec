@@ -32,27 +32,44 @@ if Code.ensure_loaded?(Ecto) do
     end
 
     @doc """
-    Returns the L2 distance
+    Calculates the L2 euclidian distance between vectors a and b. Only valid for float32 or int8 vectors.
+
+    Returns an error under the following conditions:
+     -  a or b are invalid vectors
+     -  a or b do not share the same vector element types (ex float32 or int8)
+     -  a or b are bit vectors. Use vec_distance_hamming() for distance calculations between two bitvectors.
+     -  a or b do not have the same length.
     """
-    defmacro l2_distance(left, right) do
+    defmacro vec_distance_L2(left, right) do
       quote do
         fragment("vec_distance_L2(?, ?)", unquote(left), unquote(right))
       end
     end
 
     @doc """
-    Returns the cosine distance
+    Calculates the cosine distance between vectors a and b. Only valid for float32 or int8 vectors.
+
+    Returns an error under the following conditions:
+     - a or b are invalid vectors
+     - a or b do not share the same vector element types (ex float32 or int8)
+     - a or b are bit vectors. Use vec_distance_hamming() for distance calculations between two bitvectors.
+     - a or b do not have the same length
     """
-    defmacro cosine_distance(left, right) do
+    defmacro vec_distance_cosine(left, right) do
       quote do
         fragment("vec_distance_cosine(?, ?)", unquote(left), unquote(right))
       end
     end
 
     @doc """
-    Returns the Hamming distance
+    Calculates the hamming distance between two bitvectors a and b. Only valid for bitvectors.
+
+    Returns an error under the following conditions:
+     - a or b are not bitvectors
+     - a and b do not share the same length
+     - Memory cannot be allocated    
     """
-    defmacro hamming_distance(left, right) do
+    defmacro vec_distance_hamming(left, right) do
       quote do
         fragment("vec_distance_hamming(?, ?)", unquote(left), unquote(right))
       end

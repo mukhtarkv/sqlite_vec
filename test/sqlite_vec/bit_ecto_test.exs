@@ -43,7 +43,7 @@ defmodule BitEctoTest do
     items =
       Repo.all(
         from(i in BitItem,
-          order_by: hamming_distance(i.embedding, vec_bit(SqliteVec.Bit.new([0x01]))),
+          order_by: vec_distance_hamming(i.embedding, vec_bit(SqliteVec.Bit.new([0x01]))),
           limit: 5
         )
       )

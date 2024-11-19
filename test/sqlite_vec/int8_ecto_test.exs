@@ -55,7 +55,7 @@ defmodule Int8EctoTest do
     items =
       Repo.all(
         from(i in Int8Item,
-          order_by: l2_distance(i.embedding, vec_int8(SqliteVec.Int8.new([2, 2]))),
+          order_by: vec_distance_L2(i.embedding, vec_int8(SqliteVec.Int8.new([2, 2]))),
           limit: 5
         )
       )
@@ -75,7 +75,7 @@ defmodule Int8EctoTest do
     items =
       Repo.all(
         from(i in Int8Item,
-          order_by: cosine_distance(i.embedding, vec_int8(SqliteVec.Int8.new([1, 1]))),
+          order_by: vec_distance_cosine(i.embedding, vec_int8(SqliteVec.Int8.new([1, 1]))),
           limit: 5
         )
       )
@@ -87,7 +87,7 @@ defmodule Int8EctoTest do
     items =
       Repo.all(
         from(i in Int8Item,
-          order_by: 1 - cosine_distance(i.embedding, vec_int8(SqliteVec.Int8.new([1, 1]))),
+          order_by: 1 - vec_distance_cosine(i.embedding, vec_int8(SqliteVec.Int8.new([1, 1]))),
           limit: 5
         )
       )
