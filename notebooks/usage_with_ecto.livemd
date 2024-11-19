@@ -47,7 +47,7 @@ defmodule MyApp.Repo.Migrations.CreateEmbeddingsTable do
   end
 
   def down do
-    execute("DROP TABLE embeddings") 
+    execute("DROP TABLE embeddings")
   end
 end
 ```
@@ -72,9 +72,18 @@ end
 Insert some vectors:
 
 ```elixir
-MyApp.Repo.insert(%Embedding{embedding: SqliteVec.Float32.new([1, 2, 3, 4]), metadata: "from constructor"})
-MyApp.Repo.insert(%Embedding{embedding: [3, 4, 5, 6], metadata: "from list"})
-MyApp.Repo.insert(%Embedding{embedding:  Nx.tensor([3, 4, 5, 6], type: :f32), metadata: "from tensor"})
+MyApp.Repo.insert(%Embedding{
+  embedding: SqliteVec.Float32.new([1, 2, 3, 4])
+})
+
+MyApp.Repo.insert(%Embedding{
+  embedding: SqliteVec.Float32.new([3, 4, 5, 6])
+})
+
+MyApp.Repo.insert(%Embedding{
+  embedding: SqliteVec.Float32.new(Nx.tensor([3, 4, 5, 6], type: :f32)),
+  metadata: "from tensor"
+})
 ```
 
 Query them:
@@ -87,7 +96,7 @@ v = SqliteVec.Float32.new([2, 2, 3, 3])
 
 MyApp.Repo.all(
   from(i in Embedding,
-    order_by: vec_distance_L2(i.embedding, vec_f32(^v.data))
+    order_by: vec_distance_L2(i.embedding, vec_f32(v))
   )
 )
 ```
@@ -101,7 +110,9 @@ defmodule MyApp.Repo.Migrations.CreateVirtualEmbeddingsTable do
   use Ecto.Migration
 
   def up do
-    execute("CREATE VIRTUAL TABLE virtual_embeddings_table USING vec0(id INTEGER PRIMARY KEY, embedding float[2])")
+    execute(
+      "CREATE VIRTUAL TABLE virtual_embeddings_table USING vec0(id INTEGER PRIMARY KEY, embedding float[2])"
+    )
   end
 
   def down do
@@ -126,9 +137,9 @@ end
 
 ```elixir
 MyApp.Repo.insert_all(VirtualEmbedding, [
-  [embedding: [0, 0]],
-  [embedding: [1, 1]],
-  [embedding: [2, 3]]
+  [embedding: SqliteVec.Float32.new([0, 0])],
+  [embedding: SqliteVec.Float32.new([1, 1])],
+  [embedding: SqliteVec.Float32.new([2, 3])]
 ])
 ```
 
@@ -140,7 +151,7 @@ v = SqliteVec.Float32.new([2, 2])
 
 MyApp.Repo.all(
   from(i in VirtualEmbedding,
-    order_by: vec_distance_L2(i.embedding, vec_f32(^v.data))
+    order_by: vec_distance_L2(i.embedding, vec_f32(v))
   )
 )
 ```
