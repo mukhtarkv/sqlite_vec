@@ -13,6 +13,12 @@ defmodule BitEctoTest do
   import SqliteVec.Ecto.Query
 
   setup_all do
+    Ecto.Adapters.SQL.query!(Repo, "DROP TABLE IF EXISTS test", [])
+
+    Ecto.Adapters.SQL.query!(Repo, "CREATE TABLE test (some_column)", [])
+
+    Ecto.Adapters.SQL.query!(Repo, "INSERT INTO test (some_column) VALUES ($1)", ["test dummy"])
+
     Ecto.Adapters.SQL.query!(Repo, "DROP TABLE IF EXISTS bit_ecto_items", [])
 
     Ecto.Adapters.SQL.query!(
@@ -51,6 +57,66 @@ defmodule BitEctoTest do
              [0x0A],
              [0xFF]
            ]
+  end
+
+  test "vec_length returns number of elements of vector" do
+    vector = SqliteVec.Bit.new([0b00000001, 0b00000010])
+    assert Repo.one(from("test", select: vec_length(vec_bit(vector)))) == 16
+  end
+
+  test "vec_type returns vector type as string" do
+    vector = SqliteVec.Bit.new([1, 2, 3])
+    assert Repo.one(from("test", select: vec_type(vec_bit(vector)))) == "bit"
+  end
+
+  test "vec_add errors" do
+    v1 = SqliteVec.Bit.new([1, 2, 3])
+    v2 = SqliteVec.Bit.new([4, 5, 6])
+
+    assert_raise Exqlite.Error, fn ->
+      Repo.one(from("test", select: vec_add(vec_bit(v1), vec_bit(v2))))
+    end
+  end
+
+  test "vec_sub subtracts two vectors element wise" do
+    v1 = SqliteVec.Bit.new([1, 22, 3])
+    v2 = SqliteVec.Bit.new([4, 15, 26])
+
+    assert_raise Exqlite.Error, fn ->
+      Repo.one(from("test", select: vec_sub(vec_bit(v1), vec_bit(v2))))
+    end
+  end
+
+  test "vec_normalize errors" do
+    vector = SqliteVec.Bit.new([3, 4])
+
+    assert_raise Exqlite.Error, fn ->
+      Repo.one(from("test", select: vec_normalize(vec_bit(vector))))
+    end
+  end
+
+  test "vec_slice extracts subset of vector" do
+    vector = SqliteVec.Bit.new([0b00000001, 0b00000010, 0b00000011, 0b00000100])
+
+    binary = Repo.one(from("test", select: vec_slice(vec_bit(vector), ^8, ^24)))
+
+    assert SqliteVec.Bit.from_binary(binary) ==
+             SqliteVec.Bit.new([0b00000010, 0b00000011])
+  end
+
+  test "vec_to_json returns vector as json" do
+    vector = SqliteVec.Bit.new([0b00000001, 0b00000010, 0b00000011])
+
+    assert Repo.one(from("test", select: vec_to_json(vec_bit(vector)))) ==
+             "[1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0]"
+  end
+
+  test "vec_quantize_binary errors" do
+    vector = SqliteVec.Bit.new([1, -2, 3, -4, -5, 6, -7, -8])
+
+    assert_raise Exqlite.Error, fn ->
+      Repo.one(from("test", select: vec_quantize_binary(vec_bit(vector))))
+    end
   end
 
   @tag :skip

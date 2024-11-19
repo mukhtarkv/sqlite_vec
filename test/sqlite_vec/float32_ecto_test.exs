@@ -13,6 +13,12 @@ defmodule EctoTest do
   import SqliteVec.Ecto.Query
 
   setup_all do
+    Ecto.Adapters.SQL.query!(Repo, "DROP TABLE IF EXISTS test", [])
+
+    Ecto.Adapters.SQL.query!(Repo, "CREATE TABLE test (some_column)", [])
+
+    Ecto.Adapters.SQL.query!(Repo, "INSERT INTO test (some_column) VALUES ($1)", ["test dummy"])
+
     Ecto.Adapters.SQL.query!(Repo, "DROP TABLE IF EXISTS float32_ecto_items", [])
 
     Ecto.Adapters.SQL.query!(
@@ -83,6 +89,68 @@ defmodule EctoTest do
       )
 
     assert Enum.map(items, fn v -> v.id end) == [1, 3, 2]
+  end
+
+  test "vec_length returns number of elements of vector" do
+    vector = SqliteVec.Float32.new([1, 2, 3])
+    assert Repo.one(from("test", select: vec_length(vec_f32(vector)))) == 3
+  end
+
+  test "vec_type returns vector type as string" do
+    vector = SqliteVec.Float32.new([1, 2, 3])
+    assert Repo.one(from("test", select: vec_type(vec_f32(vector)))) == "float32"
+  end
+
+  test "vec_add adds two vectors element wise" do
+    v1 = SqliteVec.Float32.new([1, 2, 3])
+    v2 = SqliteVec.Float32.new([4, 5, 6])
+
+    binary = Repo.one(from("test", select: vec_add(vec_f32(v1), vec_f32(v2))))
+
+    assert SqliteVec.Float32.from_binary(binary) ==
+             SqliteVec.Float32.new([5, 7, 9])
+  end
+
+  test "vec_sub subtracts two vectors element wise" do
+    v1 = SqliteVec.Float32.new([1, 22, 3])
+    v2 = SqliteVec.Float32.new([4, 15, 26])
+
+    binary = Repo.one(from("test", select: vec_sub(vec_f32(v1), vec_f32(v2))))
+
+    assert SqliteVec.Float32.from_binary(binary) ==
+             SqliteVec.Float32.new([-3, 7, -23])
+  end
+
+  test "vec_normalize performs l2 normalization" do
+    vector = SqliteVec.Float32.new([3, 4])
+    l2_norm = :math.sqrt(3 * 3 + 4 * 4)
+    binary = Repo.one(from("test", select: vec_normalize(vec_f32(vector))))
+
+    assert SqliteVec.Float32.from_binary(binary) ==
+             SqliteVec.Float32.new([3 / l2_norm, 4 / l2_norm])
+  end
+
+  test "vec_slice extracts subset of vector" do
+    vector = SqliteVec.Float32.new([1, 2, 3, 4])
+
+    binary = Repo.one(from("test", select: vec_slice(vec_f32(vector), ^1, ^3)))
+
+    assert SqliteVec.Float32.from_binary(binary) ==
+             SqliteVec.Float32.new([2, 3])
+  end
+
+  test "vec_to_json returns vector as json" do
+    vector = SqliteVec.Float32.new([1, 2, 3])
+
+    assert Repo.one(from("test", select: vec_to_json(vec_f32(vector)))) ==
+             "[1.000000,2.000000,3.000000]"
+  end
+
+  test "vec_quantize_binary quantizes vector into bitvector" do
+    vector = SqliteVec.Float32.new([1, -2, 3, -4, -5, 6, -7, -8])
+    binary = Repo.one(from("test", select: vec_quantize_binary(vec_f32(vector))))
+
+    assert binary == <<0b00100101>>
   end
 
   test "cast" do
