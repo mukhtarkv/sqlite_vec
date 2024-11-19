@@ -66,7 +66,6 @@ defmodule SqliteVec.MixProject do
     [
       maintainers: ["Joel Koch"],
       licenses: ["MIT"],
-      files: ~w(lib mix.exs README.md LICENSE),
       links: %{
         GitHub: "https://github.com/joelpaulkoch/sqlite_vec"
       }
