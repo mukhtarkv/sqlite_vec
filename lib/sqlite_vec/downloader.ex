@@ -3,7 +3,7 @@ defmodule SqliteVec.Downloader do
   The downloader module for `SqliteVec`.
   If the configured version already exists, the download is skipped.
   Otherwise, the corresponding GitHub release artifact will be downloaded.
-  Afterwards, all previously downloaded versions will be deleted.
+  Afterwards, all other previously downloaded versions will be deleted.
   """
 
   use OctoFetch,

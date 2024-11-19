@@ -1,6 +1,6 @@
 defmodule SqliteVec do
   @moduledoc """
-  Downloads the precompiled loadable library of `sqlite-vec` from its GitHub releases.
+  Downloads the precompiled loadable library of `sqlite-vec` from GitHub releases.
   """
 
   @doc """
@@ -13,7 +13,7 @@ defmodule SqliteVec do
   end
 
   @doc """
-  Downloads the speicified `version` to `output_dir`.
+  Downloads the specified `version` to `output_dir`.
   """
   def download(output_dir, version) do
     SqliteVec.Downloader.download(output_dir, override_version: version)
