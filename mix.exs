@@ -15,6 +15,9 @@ defmodule SqliteVec.MixProject do
       aliases: [
         "compile.download_sqlite_vec": &download_sqlite_vec/1
       ],
+      preferred_cli_env: [
+        "test.watch": :test
+      ],
       name: "SqliteVec",
       package: package(),
       docs: docs(),
@@ -54,7 +57,8 @@ defmodule SqliteVec.MixProject do
       {:ecto_sql, "~> 3.0", only: :test},
       {:ecto_sqlite3, "~> 0.17", only: :test},
       {:stream_data, "~> 1.0", only: :test},
-      {:ex_doc, "~> 0.34", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 
