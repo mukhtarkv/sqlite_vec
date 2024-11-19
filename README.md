@@ -1,8 +1,8 @@
 # SqliteVec
 
-[![Hex Package](https://img.shields.io/hexpm/v/sqlite_vec.svg&style=for-the-badge)](https://hex.pm/packages/sqlite_vec)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg&style=for-the-badge)](https://hexdocs.pm/sqlite_vec)
-[![Build Status](https://github.com/joelpaulkoch/sqlite_vec/workflows/ci/badge.svg&style=for-the-badge)](https://github.com/joelpaulkoch/sqlite_vec/actions)
+[![Hex Package](https://img.shields.io/hexpm/v/sqlite_vec.svg?style=for-the-badge)](https://hex.pm/packages/sqlite_vec)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg?style=for-the-badge)](https://hexdocs.pm/sqlite_vec)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/joelpaulkoch/sqlite_vec/ci.yml?label=Build%20Status&style=for-the-badge&branch=main)](https://github.com/joelpaulkoch/sqlite_vec/actions)
 
 A wrapper to use [sqlite-vec](https://github.com/asg017/sqlite-vec), a SQLite extension for working with vectors, in Elixir.
 The configured version of the precompiled loadable library will be downloaded from the GitHub releases.
