@@ -40,9 +40,9 @@ if Code.ensure_loaded?(Ecto) do
      -  a or b are bit vectors. Use vec_distance_hamming() for distance calculations between two bitvectors.
      -  a or b do not have the same length.
     """
-    defmacro vec_distance_L2(left, right) do
+    defmacro vec_distance_L2(a, b) do
       quote do
-        fragment("vec_distance_L2(?, ?)", unquote(left), unquote(right))
+        fragment("vec_distance_L2(?, ?)", unquote(a), unquote(b))
       end
     end
 
@@ -55,9 +55,9 @@ if Code.ensure_loaded?(Ecto) do
      - a or b are bit vectors. Use vec_distance_hamming() for distance calculations between two bitvectors.
      - a or b do not have the same length
     """
-    defmacro vec_distance_cosine(left, right) do
+    defmacro vec_distance_cosine(a, b) do
       quote do
-        fragment("vec_distance_cosine(?, ?)", unquote(left), unquote(right))
+        fragment("vec_distance_cosine(?, ?)", unquote(a), unquote(b))
       end
     end
 
@@ -69,9 +69,9 @@ if Code.ensure_loaded?(Ecto) do
      - a and b do not share the same length
      - Memory cannot be allocated    
     """
-    defmacro vec_distance_hamming(left, right) do
+    defmacro vec_distance_hamming(a, b) do
       quote do
-        fragment("vec_distance_hamming(?, ?)", unquote(left), unquote(right))
+        fragment("vec_distance_hamming(?, ?)", unquote(a), unquote(b))
       end
     end
 
@@ -100,9 +100,9 @@ if Code.ensure_loaded?(Ecto) do
 
     An error is raised if either a or b are invalid, or if they are not the same type or same length.
     """
-    defmacro vec_add(left, right) do
+    defmacro vec_add(a, b) do
       quote do
-        fragment("vec_add(?, ?)", unquote(left), unquote(right))
+        fragment("vec_add(?, ?)", unquote(a), unquote(b))
       end
     end
 
@@ -113,9 +113,9 @@ if Code.ensure_loaded?(Ecto) do
 
     An error is raised if either a or b are invalid, or if they are not the same type or same length.
     """
-    defmacro vec_sub(left, right) do
+    defmacro vec_sub(a, b) do
       quote do
-        fragment("vec_sub(?, ?)", unquote(left), unquote(right))
+        fragment("vec_sub(?, ?)", unquote(a), unquote(b))
       end
     end
 
