@@ -40,6 +40,7 @@ if Code.ensure_loaded?(Ecto) do
      -  a or b are bit vectors. Use vec_distance_hamming() for distance calculations between two bitvectors.
      -  a or b do not have the same length.
     """
+    # credo:disable-for-next-line Credo.Check.Readability.FunctionNames
     defmacro vec_distance_L2(a, b) do
       quote do
         fragment("vec_distance_L2(?, ?)", unquote(a), unquote(b))

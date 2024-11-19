@@ -47,7 +47,7 @@ defmodule SqliteVec.Bit.Test do
 
       tensor
     end
-    |> StreamData.filter(&is_finite(&1))
+    |> StreamData.filter(&finite?(&1))
   end
 
   defp random_integer(type, shape, key) do
@@ -66,7 +66,7 @@ defmodule SqliteVec.Bit.Test do
     Nx.Random.uniform(key, shape: shape, type: type)
   end
 
-  defp is_finite(tensor) do
+  defp finite?(tensor) do
     tensor |> Nx.is_infinity() |> Nx.any() |> Nx.to_number() == 0
   end
 

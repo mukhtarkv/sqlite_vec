@@ -1,5 +1,8 @@
 if Code.ensure_loaded?(Ecto) do
   defmodule SqliteVec.Ecto.Float32 do
+    @moduledoc """
+    `Ecto.Type` for `SqliteVec.Float32`
+    """
     use Ecto.Type
 
     def type, do: :binary

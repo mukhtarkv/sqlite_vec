@@ -26,10 +26,10 @@ defmodule SqliteVec.Float32.Test do
 
       tensor
     end
-    |> StreamData.filter(&is_finite(&1))
+    |> StreamData.filter(&finite?(&1))
   end
 
-  defp is_finite(tensor) do
+  defp finite?(tensor) do
     tensor |> Nx.is_infinity() |> Nx.any() |> Nx.to_number() == 0
   end
 
