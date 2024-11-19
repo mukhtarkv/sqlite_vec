@@ -7,15 +7,17 @@ defmodule SqliteVec.Bit do
   defstruct [:data]
 
   @doc """
-  Creates a new vector from a list, tensor, or vector
+  Creates a new vector from a vector, list, or tensor
   """
-  def new(list) when is_list(list) do
-    bin = for v <- list, into: <<>>, do: <<v>>
-    from_binary(<<bin::binary>>)
-  end
+  def new(vector_or_list_or_tensor)
 
   def new(%SqliteVec.Bit{} = vector) do
     vector
+  end
+
+  def new(list) when is_list(list) do
+    bin = for v <- list, into: <<>>, do: <<v>>
+    from_binary(<<bin::binary>>)
   end
 
   if Code.ensure_loaded?(Nx) do
