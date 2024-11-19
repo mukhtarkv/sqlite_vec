@@ -31,11 +31,11 @@ defmodule EctoTest do
     })
 
     Repo.insert(%Float32Item{
-      embedding: [52.0, 43.0]
+      embedding: SqliteVec.Float32.new([52.0, 43.0])
     })
 
     Repo.insert(%Float32Item{
-      embedding: Nx.tensor([3, 4], type: :f32)
+      embedding: SqliteVec.Float32.new(Nx.tensor([3, 4], type: :f32))
     })
   end
 

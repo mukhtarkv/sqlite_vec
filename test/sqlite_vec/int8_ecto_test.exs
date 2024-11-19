@@ -37,7 +37,7 @@ defmodule Int8EctoTest do
     # })
 
     # Repo.insert(%Int8Item{
-    #   embedding: [52, 43]
+    #   embedding: SqliteVec.Int8.new([52, 43])
     # })
 
     # Repo.insert(%Int8Item{
