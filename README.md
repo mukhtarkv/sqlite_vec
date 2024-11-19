@@ -1,13 +1,20 @@
 # SqliteVec
 
+[![Hex Package](https://img.shields.io/hexpm/v/sqlite_vec.svg&style=for-the-badge)](https://hex.pm/packages/sqlite_vec)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg&style=for-the-badge)](https://hexdocs.pm/sqlite_vec)
+[![Build Status](https://github.com/joelpaulkoch/sqlite_vec/workflows/ci/badge.svg&style=for-the-badge)](https://github.com/joelpaulkoch/sqlite_vec/actions)
+
 A wrapper to use [sqlite-vec](https://github.com/asg017/sqlite-vec), a SQLite extension for working with vectors, in Elixir.
 The configured version of the precompiled loadable library will be downloaded from the GitHub releases.
 Moreover, this package provides structs and custom Ecto types for working with Float32, Int8, and Bit vectors.
 
+## Limitations
+- it's currently not possible to create int8 and bit vectors using `Ecto`. You must directly use SQL to do so
+- not implemented operations: `vec_each`, `vec_quantize_i8`
+
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `sqlite_vec` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `sqlite_vec` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -16,10 +23,6 @@ def deps do
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/sqlite_vec>.
 
 ## Getting Started
 
