@@ -7,9 +7,16 @@ defmodule SqliteVec.Downloader do
   """
 
   use OctoFetch,
-    latest_version: "0.1.5",
+    latest_version: "0.1.6",
     github_repo: "asg017/sqlite-vec",
     download_versions: %{
+      "0.1.6" => [
+        {:darwin, :amd64, "35d014e5f7bcac52645a97f1f1ca34fdb51dcd61d81ac6e6ba1c712393fbf8fd"},
+        {:darwin, :arm64, "142e195b654092632fecfadbad2825f3140026257a70842778637597f6b8c827"},
+        {:linux, :amd64, "438e0df29f3f8db3525b3aa0dcc0a199869c0bcec9d7abc5b51850469caf867f"},
+        {:linux, :arm64, "d6e4ba12c5c0186eaab42fb4449b311008d86ffd943e6377d7d88018cffab3aa"},
+        {:windows, :amd64, "f1c615577ad2e692d1e2fe046fe65994dafd8a8cae43e9e864f5f682dc295964"}
+      ],
       "0.1.5" => [
         {:darwin, :amd64, "1daa90b7cdda7e873af4636a20a2b6daf0ebd4d664f2bbbcc2ffeae219bf34b6"},
         {:darwin, :arm64, "348ea4ce39b4b4749b19ee93e5e9674d6ed7616e3e313cb20f6354cdecbebc75"},
