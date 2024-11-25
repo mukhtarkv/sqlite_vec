@@ -8,6 +8,21 @@ defmodule SqliteVec.Int8 do
 
   @doc """
   Creates a new vector from a vector, list, or tensor
+
+  The vector must be a `SqliteVec.Int8` vector.
+  The list must only contain valid int8 values, i.e. values between and including -128 and 127.
+  The tensor must have a rank of 1 and must be of type :s8.
+
+  ## Examples
+      iex> SqliteVec.Int8.new([1, 2, 3])
+      %SqliteVec.Int8{data: <<1, 2, 3>>}
+
+      iex> v1 = SqliteVec.Int8.new([1, 2, 3])
+      ...> SqliteVec.Int8.new(v1)
+      %SqliteVec.Int8{data: <<1, 2, 3>>}
+
+      iex> SqliteVec.Int8.new(Nx.tensor([1, 2, 3], type: :s8))
+      %SqliteVec.Int8{data: <<1, 2, 3>>}
   """
   def new(vector_or_list_or_tensor)
 
@@ -16,6 +31,14 @@ defmodule SqliteVec.Int8 do
   end
 
   def new(list) when is_list(list) do
+    if list == [] do
+      raise ArgumentError, "list must not be empty"
+    end
+
+    if Enum.any?(list, &(not valid_int8?(&1))) do
+      raise ArgumentError, "expected list elements to be valid int8 values"
+    end
+
     bin = for v <- list, into: <<>>, do: <<v::signed-integer-8>>
     from_binary(<<bin::binary>>)
   end
@@ -33,6 +56,10 @@ defmodule SqliteVec.Int8 do
       bin = tensor |> Nx.to_binary()
       from_binary(<<bin::binary>>)
     end
+  end
+
+  defp valid_int8?(value) do
+    is_integer(value) and -128 <= value and value <= 127
   end
 
   @doc """

@@ -2,6 +2,8 @@ defmodule SqliteVec.Int8.Test do
   use ExUnit.Case
   use ExUnitProperties
 
+  doctest SqliteVec.Int8
+
   defp int8_generator do
     gen all(integer <- StreamData.integer()) do
       <<int8::signed-integer-8>> = <<integer>>
@@ -35,6 +37,18 @@ defmodule SqliteVec.Int8.Test do
   test "creating vector from list works" do
     list = [1, 2, 3]
     assert list == list |> SqliteVec.Int8.new() |> SqliteVec.Int8.to_list()
+  end
+
+  test "creating vector from empty list errors" do
+    assert_raise ArgumentError, fn -> SqliteVec.Int8.new([]) end
+  end
+
+  test "list elements are expected to be valid int8 values" do
+    assert_raise ArgumentError, fn -> SqliteVec.Int8.new([128]) end
+    assert_raise ArgumentError, fn -> SqliteVec.Int8.new([-129]) end
+
+    assert SqliteVec.Int8.new([127])
+    assert SqliteVec.Int8.new([-128])
   end
 
   property "creating vector from list of int8 and calling to_list/1 returns original list" do
