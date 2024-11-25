@@ -7,7 +7,22 @@ defmodule SqliteVec.Bit do
   defstruct [:data]
 
   @doc """
-  Creates a new vector from a vector, list, or tensor
+  Creates a new vector from a vector, list, or tensor.
+
+  The vector must be a `SqliteVec.Bit` vector.
+  The list must only contain values of 0 or 1 and must have a length that's divisible by 8.
+  The tensor must have a rank of 1 and a type size that's divisible by 8.
+
+  ## Examples
+      iex> SqliteVec.Bit.new([0, 0, 0, 0, 0, 0, 0, 1])
+      %SqliteVec.Bit{data: <<0b00000001>>}
+
+      iex> v1 = SqliteVec.Bit.new([0, 0, 0, 0, 0, 0, 0, 1])
+      ...> SqliteVec.Bit.new(v1)
+      %SqliteVec.Bit{data: <<0b00000001>>}
+
+      iex> SqliteVec.Bit.new(Nx.tensor([1, 2, 3], type: :u8))
+      %SqliteVec.Bit{data: <<1, 2, 3>>}
   """
   def new(vector_or_list_or_tensor)
 
@@ -16,7 +31,20 @@ defmodule SqliteVec.Bit do
   end
 
   def new(list) when is_list(list) do
-    bin = for v <- list, into: <<>>, do: <<v>>
+    if list == [] do
+      raise ArgumentError, "list must not be empty"
+    end
+
+    if not length_divisible_by_8?(list) do
+      raise ArgumentError, "expected list length to be divisible by 8"
+    end
+
+    if Enum.any?(list, &(not bit?(&1))) do
+      raise ArgumentError, "expected list elements to be 0 or 1"
+    end
+
+    bin = for v <- list, into: <<>>, do: <<v::1>>
+
     from_binary(<<bin::binary>>)
   end
 
@@ -37,6 +65,14 @@ defmodule SqliteVec.Bit do
     defp binary_type_size?({_type, size}), do: rem(size, 8) == 0
   end
 
+  defp length_divisible_by_8?(list) do
+    rem(length(list), 8) == 0
+  end
+
+  defp bit?(0), do: true
+  defp bit?(1), do: true
+  defp bit?(_), do: false
+
   @doc """
   Creates a new vector from its binary representation
   """
@@ -52,12 +88,12 @@ defmodule SqliteVec.Bit do
   end
 
   @doc """
-  Converts the vector to a list of integers
+  Converts the vector to a list of bits
   """
   def to_list(vector) when is_struct(vector, SqliteVec.Bit) do
     <<bin::binary>> = vector.data
 
-    for <<v::integer-8 <- bin>>, do: v
+    for <<v::1 <- bin>>, do: v
   end
 
   if Code.ensure_loaded?(Nx) do

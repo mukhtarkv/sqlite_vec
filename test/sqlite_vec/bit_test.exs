@@ -2,6 +2,8 @@ defmodule SqliteVec.Bit.Test do
   use ExUnit.Case
   use ExUnitProperties
 
+  doctest SqliteVec.Bit
+
   defp shape_generator do
     {StreamData.positive_integer()}
   end
@@ -71,18 +73,35 @@ defmodule SqliteVec.Bit.Test do
   end
 
   test "creating vector from vector works" do
-    vector = SqliteVec.Bit.new([1, 2, 3])
+    vector = SqliteVec.Bit.new([1, 0, 1, 0, 1, 1, 1, 1])
     assert vector == vector |> SqliteVec.Bit.new()
   end
 
-  test "creating vector from list works" do
-    list = [1, 2, 3]
+  test "creating vector from list of bits works" do
+    list = [1, 0, 1, 0, 1, 1, 1, 1]
     assert list == list |> SqliteVec.Bit.new() |> SqliteVec.Bit.to_list()
   end
 
-  property "creating vector from list of bytes and calling to_list/1 returns original list" do
-    check all(list <- StreamData.list_of(StreamData.byte(), min_length: 1)) do
-      assert list == list |> SqliteVec.Bit.new() |> SqliteVec.Bit.to_list()
+  test "creating vector from empty list errors" do
+    assert_raise ArgumentError, fn -> SqliteVec.Bit.new([]) end
+  end
+
+  test "list length must be divisible by 8" do
+    list = [1, 0, 0, 0]
+    assert_raise ArgumentError, fn -> SqliteVec.Bit.new(list) end
+  end
+
+  test "list elements are expected to be 0 or 1" do
+    list = [2, 1, 1, 1, 1, 1, 1, 1]
+    assert_raise ArgumentError, fn -> SqliteVec.Bit.new(list) end
+  end
+
+  property "creating vector from list of bits and calling to_list/1 returns original list" do
+    check all(
+            bytes <- StreamData.positive_integer(),
+            bitlist <- StreamData.list_of(StreamData.integer(0..1), length: 8 * bytes)
+          ) do
+      assert bitlist == bitlist |> SqliteVec.Bit.new() |> SqliteVec.Bit.to_list()
     end
   end
 
@@ -111,12 +130,15 @@ defmodule SqliteVec.Bit.Test do
   end
 
   test "inspect" do
-    vector = SqliteVec.Bit.new([1, 2, 3])
-    assert "vec_bit('[1, 2, 3]')" == inspect(vector)
+    vector = SqliteVec.Bit.new([1, 0, 1, 0, 1, 1, 1, 1])
+    assert "vec_bit('[1, 0, 1, 0, 1, 1, 1, 1]')" == inspect(vector)
   end
 
   test "equals" do
-    assert SqliteVec.Bit.new([1, 2, 3]) == SqliteVec.Bit.new([1, 2, 3])
-    refute SqliteVec.Bit.new([1, 2, 3]) == SqliteVec.Bit.new([1, 2, 4])
+    assert SqliteVec.Bit.new([0, 0, 0, 0, 1, 1, 1, 1]) ==
+             SqliteVec.Bit.new([0, 0, 0, 0, 1, 1, 1, 1])
+
+    refute SqliteVec.Bit.new([1, 0, 0, 0, 1, 1, 1, 1]) ==
+             SqliteVec.Bit.new([0, 0, 0, 0, 1, 1, 1, 1])
   end
 end
