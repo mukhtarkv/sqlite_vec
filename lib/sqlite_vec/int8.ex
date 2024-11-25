@@ -4,6 +4,8 @@ defmodule SqliteVec.Int8 do
   Vectors are stored as binaries.
   """
 
+  @type t :: %__MODULE__{data: binary()}
+
   defstruct [:data]
 
   @doc """

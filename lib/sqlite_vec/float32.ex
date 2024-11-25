@@ -4,6 +4,8 @@ defmodule SqliteVec.Float32 do
   Vectors are stored as binaries in little endian.
   """
 
+  @type t :: %__MODULE__{data: binary()}
+
   defstruct [:data]
 
   @doc """
