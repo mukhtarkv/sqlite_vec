@@ -8,6 +8,21 @@ defmodule SqliteVec.Float32 do
 
   @doc """
   Creates a new vector from a vector, list, or tensor
+
+  The vector must be a `SqliteVec.Float32` vector.
+  The list may contain any number but the values will be converted to f32 format.
+  The tensor must have a rank of 1 and must be of type :f32.
+
+  ## Examples
+      iex> SqliteVec.Float32.new([1.0, 2.0])
+      %SqliteVec.Float32{data: <<0, 0, 128, 63, 0, 0, 0, 64>>}
+
+      iex> v1 = SqliteVec.Float32.new([1, 2])
+      ...> SqliteVec.Float32.new(v1)
+      %SqliteVec.Float32{data: <<0, 0, 128, 63, 0, 0, 0, 64>>}
+
+      iex> SqliteVec.Float32.new(Nx.tensor([1, 2], type: :f32))
+      %SqliteVec.Float32{data: <<0, 0, 128, 63, 0, 0, 0, 64>>}
   """
   def new(vector_or_list_or_tensor)
 
@@ -16,6 +31,10 @@ defmodule SqliteVec.Float32 do
   end
 
   def new(list) when is_list(list) do
+    if list == [] do
+      raise ArgumentError, "list must not be empty"
+    end
+
     bin = for v <- list, into: <<>>, do: <<v::float-32-little>>
     from_binary(<<bin::binary>>)
   end

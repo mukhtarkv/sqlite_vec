@@ -2,6 +2,8 @@ defmodule SqliteVec.Float32.Test do
   use ExUnit.Case
   use ExUnitProperties
 
+  doctest SqliteVec.Float32
+
   defp float32_generator do
     gen all(float <- StreamData.float()) do
       <<float32::float-32>> = <<float::float-32>>
@@ -41,6 +43,10 @@ defmodule SqliteVec.Float32.Test do
   test "creating vector from list works" do
     list = [1.0, 2.0, 3.0]
     assert list == list |> SqliteVec.Float32.new() |> SqliteVec.Float32.to_list()
+  end
+
+  test "creating vector from empty list errors" do
+    assert_raise ArgumentError, fn -> SqliteVec.Float32.new([]) end
   end
 
   property "creating vector from list of float32 and calling to_list/1 returns original list" do
