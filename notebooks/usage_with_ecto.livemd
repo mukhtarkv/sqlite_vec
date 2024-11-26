@@ -32,11 +32,13 @@ defmodule MyApp.Repo do
     adapter: Ecto.Adapters.SQLite3
 end
 
-db_path = Path.join(__DIR__, "demo.db")
+db_path = Path.join(System.tmp_dir!(), "demo.db")
 Kino.start_child({MyApp.Repo, database: db_path, load_extensions: [SqliteVec.path()]})
 ```
 
 ## With a regular table
+
+You can use the vector types in any regular table. Note however, that using virtual tables as described below will be [faster](https://alexgarcia.xyz/sqlite-vec/features/knn.html).
 
 ```elixir
 defmodule MyApp.Repo.Migrations.CreateEmbeddingsTable do
@@ -103,7 +105,8 @@ MyApp.Repo.all(
 
 ## With a virtual table
 
-Then, we can run a migration to create the virtual table where we store vectors.
+You can create a virtual table to enable fast KNN queries. Since version 0.1.6, auxiliary columns and metadata are available in virtual tables.
+Please refer to [this](https://alexgarcia.xyz/sqlite-vec/features/vec0.html) documentation to decide what's best for your use case.
 
 ```elixir
 defmodule MyApp.Repo.Migrations.CreateVirtualEmbeddingsTable do
@@ -111,7 +114,7 @@ defmodule MyApp.Repo.Migrations.CreateVirtualEmbeddingsTable do
 
   def up do
     execute(
-      "CREATE VIRTUAL TABLE virtual_embeddings_table USING vec0(id INTEGER PRIMARY KEY, embedding float[2])"
+      "CREATE VIRTUAL TABLE virtual_embeddings_table USING vec0(id INTEGER PRIMARY KEY, embedding float[2], metadata TEXT, +auxiliary_column TEXT)"
     )
   end
 
@@ -131,16 +134,30 @@ defmodule VirtualEmbedding do
 
   schema "virtual_embeddings_table" do
     field(:embedding, SqliteVec.Ecto.Float32)
+    field(:metadata, :string)
+    field(:auxiliary_column, :string)
   end
 end
 ```
 
 ```elixir
-MyApp.Repo.insert_all(VirtualEmbedding, [
-  [embedding: SqliteVec.Float32.new([0, 0])],
-  [embedding: SqliteVec.Float32.new([1, 1])],
-  [embedding: SqliteVec.Float32.new([2, 3])]
-])
+MyApp.Repo.insert(%VirtualEmbedding{
+  embedding: SqliteVec.Float32.new([0, 0]),
+  metadata: "first vector",
+  auxiliary_column: "first vector"
+})
+
+MyApp.Repo.insert(%VirtualEmbedding{
+  embedding: SqliteVec.Float32.new([1, 1]),
+  metadata: "second vector",
+  auxiliary_column: "second vector"
+})
+
+MyApp.Repo.insert(%VirtualEmbedding{
+  embedding: SqliteVec.Float32.new([2, 3]),
+  metadata: "third vector",
+  auxiliary_column: "third vector"
+})
 ```
 
 ```elixir
@@ -151,7 +168,7 @@ v = SqliteVec.Float32.new([2, 2])
 
 MyApp.Repo.all(
   from(i in VirtualEmbedding,
-    order_by: vec_distance_L2(i.embedding, vec_f32(v))
+    where: fragment("? match ? and k=?", i.embedding, vec_f32(v), 3)
   )
 )
 ```
