@@ -45,6 +45,28 @@ defmodule EctoTest do
     })
   end
 
+  test "match performs a KNN query" do
+    v = SqliteVec.Float32.new([2, 2])
+
+    items =
+      Repo.all(
+        from(i in Float32Item,
+          where: match(i.embedding, vec_f32(v)),
+          limit: 3
+        )
+      )
+
+    assert Enum.map(items, fn v ->
+             v.id
+           end) == [1, 3, 2]
+
+    assert Enum.map(items, fn v -> v.embedding |> SqliteVec.Float32.to_list() end) == [
+             [1.0, 2.0],
+             [3.0, 4.0],
+             [52.0, 43.0]
+           ]
+  end
+
   test "vector l2 distance" do
     v = SqliteVec.Float32.new([2, 2])
 

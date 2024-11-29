@@ -160,6 +160,8 @@ MyApp.Repo.insert(%VirtualEmbedding{
 })
 ```
 
+You can perform a K-nearest-neighbors query using `match` and `limit`.
+
 ```elixir
 import Ecto.Query
 import SqliteVec.Ecto.Query
@@ -168,7 +170,8 @@ v = SqliteVec.Float32.new([2, 2])
 
 MyApp.Repo.all(
   from(i in VirtualEmbedding,
-    where: fragment("? match ? and k=?", i.embedding, vec_f32(v), 3)
+    where: match(i.embedding, vec_f32(v)),
+    limit: 3
   )
 )
 ```

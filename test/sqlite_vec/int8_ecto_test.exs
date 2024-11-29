@@ -71,6 +71,26 @@ defmodule Int8EctoTest do
            ]
   end
 
+  test "match performs a KNN query" do
+    items =
+      Repo.all(
+        from(i in Int8Item,
+          where: match(i.embedding, vec_int8(SqliteVec.Int8.new([2, 2]))),
+          limit: 3
+        )
+      )
+
+    assert Enum.map(items, fn v ->
+             v.id
+           end) == [1, 3, 2]
+
+    assert Enum.map(items, fn v -> v.embedding |> SqliteVec.Int8.to_list() end) == [
+             [1, 2],
+             [3, 4],
+             [52, 43]
+           ]
+  end
+
   test "vector cosine distance" do
     items =
       Repo.all(

@@ -39,6 +39,30 @@ defmodule BitEctoTest do
     )
   end
 
+  test "match performs a KNN query" do
+    items =
+      Repo.all(
+        from(i in BitItem,
+          where:
+            match(
+              i.embedding,
+              vec_bit(SqliteVec.Bit.new([0, 0, 0, 0, 0, 0, 0, 1]))
+            ),
+          limit: 3
+        )
+      )
+
+    assert Enum.map(items, fn v ->
+             v.id
+           end) == [2, 3, 1]
+
+    assert Enum.map(items, fn v -> v.embedding |> SqliteVec.Bit.to_list() end) == [
+             [0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 1, 0, 1, 0],
+             [1, 1, 1, 1, 1, 1, 1, 1]
+           ]
+  end
+
   test "vector hamming distance" do
     items =
       Repo.all(

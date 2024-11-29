@@ -32,6 +32,15 @@ if Code.ensure_loaded?(Ecto) do
     end
 
     @doc """
+    Performs a K-nearest-neighbors (KNN) query. You must specify a LIMIT or 'k = ?' constraint.
+    """
+    defmacro match(left, right) do
+      quote do
+        fragment("? match ?", unquote(left), unquote(right))
+      end
+    end
+
+    @doc """
     Calculates the L2 euclidian distance between vectors a and b. Only valid for float32 or int8 vectors.
 
     Returns an error under the following conditions:
