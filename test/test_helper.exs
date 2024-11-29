@@ -11,4 +11,5 @@ Repo.start_link(
   load_extensions: [SqliteVec.path()]
 )
 
+ExUnit.configure(exclude: :slow)
 ExUnit.start()

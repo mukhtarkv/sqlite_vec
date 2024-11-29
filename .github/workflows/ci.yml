@@ -72,4 +72,4 @@ jobs:
       - name: Compile project
         run: mix compile
       - name: Test project
-        run: mix test
+        run: mix test --include slow
