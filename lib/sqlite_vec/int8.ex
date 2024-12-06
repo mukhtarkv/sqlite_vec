@@ -17,14 +17,14 @@ defmodule SqliteVec.Int8 do
 
   ## Examples
       iex> SqliteVec.Int8.new([1, 2, 3])
-      %SqliteVec.Int8{data: <<1, 2, 3>>}
+      %SqliteVec.Int8{data: <<1::integer-8, 2::integer-8, 3::integer-8>>}
 
       iex> v1 = SqliteVec.Int8.new([1, 2, 3])
       ...> SqliteVec.Int8.new(v1)
-      %SqliteVec.Int8{data: <<1, 2, 3>>}
+      %SqliteVec.Int8{data: <<1::integer-8, 2::integer-8, 3::integer-8>>}
 
       iex> SqliteVec.Int8.new(Nx.tensor([1, 2, 3], type: :s8))
-      %SqliteVec.Int8{data: <<1, 2, 3>>}
+      %SqliteVec.Int8{data: <<1::integer-8, 2::integer-8, 3::integer-8>>}
   """
   def new(vector_or_list_or_tensor)
 
@@ -55,7 +55,7 @@ defmodule SqliteVec.Int8 do
         raise ArgumentError, "expected type to be :s8"
       end
 
-      bin = tensor |> Nx.to_binary()
+      bin = Nx.to_binary(tensor)
       from_binary(<<bin::binary>>)
     end
   end

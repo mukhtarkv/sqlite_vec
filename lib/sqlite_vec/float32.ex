@@ -1,7 +1,22 @@
 defmodule SqliteVec.Float32 do
   @moduledoc """
   A vector struct for float32 vectors.
-  Vectors are stored as binaries in little endian.
+  Vectors are stored as binaries in the endianness of the system.
+
+  > ### Consider endianness {: .warning}
+  >
+  > `SqliteVec.Float32.Vector` holds data in system endianness.
+  > Therefore, the same vector data will be interpreted differently on another system with different endianness.
+  > Moreover, you must consider endianness when converting the binary data directly to a list of numbers.
+
+      iex> v = SqliteVec.Float32.new([-1.0, 2.0])
+      ...> b = SqliteVec.Float32.to_binary(v)
+      ...> <<f1::float-32, f2::float-32>> = b
+      ...> [f1, f2]
+      case System.endianness() do
+        :big -> [-1.0, 2.0]
+        :little -> [4.618539608568165e-41, 8.96831017167883e-44]
+      end
   """
 
   @type t :: %__MODULE__{data: binary()}
@@ -17,14 +32,14 @@ defmodule SqliteVec.Float32 do
 
   ## Examples
       iex> SqliteVec.Float32.new([1.0, 2.0])
-      %SqliteVec.Float32{data: <<0, 0, 128, 63, 0, 0, 0, 64>>}
+      %SqliteVec.Float32{data: <<1.0::float-32-native, 2.0::float-32-native>>}
 
       iex> v1 = SqliteVec.Float32.new([1, 2])
       ...> SqliteVec.Float32.new(v1)
-      %SqliteVec.Float32{data: <<0, 0, 128, 63, 0, 0, 0, 64>>}
+      %SqliteVec.Float32{data: <<1.0::float-32-native, 2.0::float-32-native>>}
 
       iex> SqliteVec.Float32.new(Nx.tensor([1, 2], type: :f32))
-      %SqliteVec.Float32{data: <<0, 0, 128, 63, 0, 0, 0, 64>>}
+      %SqliteVec.Float32{data: <<1.0::float-32-native, 2.0::float-32-native>>}
   """
   def new(vector_or_list_or_tensor)
 
@@ -37,7 +52,7 @@ defmodule SqliteVec.Float32 do
       raise ArgumentError, "list must not be empty"
     end
 
-    bin = for v <- list, into: <<>>, do: <<v::float-32-little>>
+    bin = for v <- list, into: <<>>, do: <<v::float-32-native>>
     from_binary(<<bin::binary>>)
   end
 
@@ -51,12 +66,8 @@ defmodule SqliteVec.Float32 do
         raise ArgumentError, "expected type to be :f32"
       end
 
-      bin = tensor |> Nx.to_binary() |> f32_native_to_little()
+      bin = tensor |> Nx.to_binary()
       from_binary(<<bin::binary>>)
-    end
-
-    defp f32_native_to_little(binary) do
-      for <<n::float-32-native <- binary>>, into: <<>>, do: <<n::float-32-little>>
     end
   end
 
@@ -89,11 +100,7 @@ defmodule SqliteVec.Float32 do
     """
     def to_tensor(vector) when is_struct(vector, SqliteVec.Float32) do
       <<bin::binary>> = vector.data
-      bin |> f32_little_to_native() |> Nx.from_binary(:f32)
-    end
-
-    defp f32_little_to_native(binary) do
-      for <<n::float-32-little <- binary>>, into: <<>>, do: <<n::float-32-native>>
+      Nx.from_binary(bin, :f32)
     end
   end
 end

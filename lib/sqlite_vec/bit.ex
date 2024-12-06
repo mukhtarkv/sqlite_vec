@@ -2,6 +2,20 @@ defmodule SqliteVec.Bit do
   @moduledoc """
   A vector struct for bit vectors.
   Vectors are stored as binaries.
+
+  > ### Consider endianness {: .warning}
+  >
+  > When returned from `sqlite-vec` or created from `Nx.Tensor`, `SqliteVec.Bit.Vector` holds data in system endianness.
+  > You must consider endianness when converting the binary data to a list of numbers.
+
+      iex> v = SqliteVec.Bit.new(Nx.tensor([-1.0, 2.0], type: :f32))
+      ...> b = SqliteVec.Bit.to_binary(v)
+      ...> <<f1::float-32, f2::float-32>> = b
+      ...> [f1, f2]
+      case System.endianness() do
+        :big -> [-1.0, 2.0]
+        :little -> [4.618539608568165e-41, 8.96831017167883e-44]
+      end
   """
 
   @type t :: %__MODULE__{data: binary()}
@@ -24,7 +38,7 @@ defmodule SqliteVec.Bit do
       %SqliteVec.Bit{data: <<0b00000001>>}
 
       iex> SqliteVec.Bit.new(Nx.tensor([1, 2, 3], type: :u8))
-      %SqliteVec.Bit{data: <<1, 2, 3>>}
+      %SqliteVec.Bit{data: <<1::signed-integer-8, 2::signed-integer-8, 3::signed-integer-8>>}
   """
   def new(vector_or_list_or_tensor)
 
@@ -60,7 +74,7 @@ defmodule SqliteVec.Bit do
         raise ArgumentError, "expected type size to be divisible by 8"
       end
 
-      bin = tensor |> Nx.to_binary()
+      bin = Nx.to_binary(tensor)
       from_binary(<<bin::binary>>)
     end
 

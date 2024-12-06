@@ -109,7 +109,13 @@ defmodule SqliteVec.Float32.Test do
     refute SqliteVec.Float32.new([1, 2, 3]) == SqliteVec.Float32.new([1, 2, 4])
   end
 
-  test "little endian" do
-    assert SqliteVec.Float32.new([2]).data == <<0x00, 0x00, 0x00, 0x40>>
+  test "vectors are stored as binaries in system endianness" do
+    case System.endianness() do
+      :little ->
+        assert SqliteVec.Float32.new([2]).data == <<0x00, 0x00, 0x00, 0x40>>
+
+      :big ->
+        assert SqliteVec.Float32.new([2]).data == <<0x40, 0x00, 0x00, 0x00>>
+    end
   end
 end
