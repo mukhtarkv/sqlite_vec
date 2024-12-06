@@ -16,7 +16,7 @@ if Code.ensure_loaded?(Ecto) do
     end
 
     def dump(%SqliteVec.Int8{} = vector) do
-      {:ok, vector |> SqliteVec.Int8.new() |> SqliteVec.Int8.to_binary()}
+      {:ok, SqliteVec.Int8.to_binary(vector)}
     end
 
     def dump(_), do: :error
