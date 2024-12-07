@@ -37,7 +37,7 @@ For instance with `Exqlite`:
 Basic.load_extension(conn, SqliteVec.path())
 ```
 
-Or, with `SQLite` configured as `Ecto.Repo`:
+Or, with an `Ecto.Repo` and `ecto_sqlite3`:
 
 ```elixir
 defmodule MyApp.Repo do
