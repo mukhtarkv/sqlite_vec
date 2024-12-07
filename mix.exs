@@ -70,7 +70,8 @@ defmodule SqliteVec.MixProject do
       licenses: ["MIT"],
       links: %{
         GitHub: "https://github.com/joelpaulkoch/sqlite_vec"
-      }
+      },
+      files: ~w(lib priv/.gitkeep .formatter.exs mix.exs README.md LICENSE)
     ]
   end
 
