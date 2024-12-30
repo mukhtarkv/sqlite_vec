@@ -71,16 +71,6 @@ defmodule SqliteVec.Downloader do
     output_dir = file |> Path.dirname() |> Path.join("..") |> Path.expand()
     current_version = file |> Path.dirname() |> Path.basename()
 
-    remove_other_versions(output_dir, current_version)
-
     :ok
-  end
-
-  defp remove_other_versions(output_dir, current_version) do
-    output_dir
-    |> Path.join("*")
-    |> Path.wildcard()
-    |> Enum.filter(fn path -> Path.basename(path) != current_version end)
-    |> Enum.map(&File.rm_rf(&1))
   end
 end
