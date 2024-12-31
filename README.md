@@ -4,6 +4,10 @@
 [![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg?style=for-the-badge)](https://hexdocs.pm/sqlite_vec)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/joelpaulkoch/sqlite_vec/ci.yml?label=Build%20Status&style=for-the-badge&branch=main)](https://github.com/joelpaulkoch/sqlite_vec/actions)
 
+> [!IMPORTANT]  
+> I won't publish another release on hex.pm. [Here is a PR](https://github.com/asg017/sqlite-vec/pull/151) to get this into the official `sqlite-vec` repository.
+> Future versions will be published from there.
+
 A wrapper to use [sqlite-vec](https://github.com/asg017/sqlite-vec), a SQLite extension for working with vectors, in Elixir.
 The configured version of the precompiled loadable library will be downloaded from the GitHub releases.
 Moreover, this package provides structs and custom Ecto types for working with Float32, Int8, and Bit vectors.
